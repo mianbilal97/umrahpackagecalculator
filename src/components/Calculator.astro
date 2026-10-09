@@ -4,6 +4,15 @@
 
 <section id="tool" class="wrap" aria-label="Umrah package cost calculator">
   <div class="tool-card">
+    <div class="tool-head">
+      <h2>Estimate your Umrah cost</h2>
+      <p>Set your trip below — or start from a popular preset.</p>
+      <div class="preset-row" role="group" aria-label="Popular presets">
+        <button type="button" class="preset" data-preset="budget">💰 Budget 14-day</button>
+        <button type="button" class="preset" data-preset="family">👨‍👩‍👧 Family 10-day</button>
+        <button type="button" class="preset" data-preset="luxury">🌙 Luxury Ramadan</button>
+      </div>
+    </div>
     <div class="calc-grid">
       <div>
         <div class="field">
@@ -27,6 +36,7 @@
               <option value="10">10 days</option>
               <option value="14" selected>14 days</option>
               <option value="15">15 days</option>
+              <option value="20">20 days</option>
               <option value="21">21 days</option>
               <option value="28">28 days</option>
             </select>
@@ -76,7 +86,7 @@
       <div class="results" aria-live="polite">
         <h3>Estimated package cost <span class="season-tag" id="seasonTag">Other months</span></h3>
         <div class="big-num"><span id="grandTotal">0</span> <span class="big-unit">PKR</span></div>
-        <div class="per-person">≈ <strong id="perPerson">–</strong> per adult · <span id="travSum">2 travelers</span></div>
+        <div class="per-person">≈ <strong id="perPerson">–</strong> per adult · <span id="travSum">2 travelers</span> · <span id="perDay">–</span>/day</div>
 
         <div class="bars" aria-hidden="true">
           <div class="barrow"><span class="blabel">Flights</span><div class="btrack"><div class="bfill" id="barFlight"></div></div><span class="bval" id="valFlight"></span></div>
@@ -98,14 +108,14 @@
   'use strict';
   /* ---- pricing data (PKR, per person, 2026 market) ---- */
   var CITIES = { Karachi: 135000, Lahore: 148000, Islamabad: 152000, Faisalabad: 155000, Sialkot: 155000, Multan: 158000, Peshawar: 162000, Quetta: 170000 };
-  var VISA = 42000;
+  var VISA = 55000;
   var TIERS = {
     economy:  { makkah: 2600,  madinah: 2200,  transport: 28000, service: 15000 },
     standard: { makkah: 5200,  madinah: 4500,  transport: 32000, service: 20000 },
     luxury:   { makkah: 12000, madinah: 10000, transport: 50000, service: 35000 }
   };
   var TIER_LABEL = { economy: 'Economy 3★', standard: 'Standard 4★', luxury: 'Luxury 5★' };
-  var DURATIONS = { 7: [4, 2], 10: [6, 3], 14: [9, 5], 15: [9, 5], 21: [13, 7], 28: [17, 10] }; // [makkah nights, madinah nights]
+  var DURATIONS = { 7: [4, 2], 10: [6, 3], 14: [9, 5], 15: [9, 5], 20: [12, 7], 21: [13, 7], 28: [17, 10] }; // [makkah nights, madinah nights]
   var SHARING = { quad: 1, triple: 1.25, double: 1.7 };
   var SHARE_LABEL = { quad: 'Quad (4 persons)', triple: 'Triple (3 persons)', double: 'Double (2 persons)' };
   var SEASONS = {
@@ -149,6 +159,34 @@
   ['citySel', 'durSel', 'seasonSel', 'adultNum', 'childNum'].forEach(function (id) {
     $(id).addEventListener('input', update);
     $(id).addEventListener('change', update);
+  });
+
+  /* popular presets */
+  var PRESETS = {
+    budget: { city: 'Karachi', dur: '14', season: 'summer', tier: 'economy', share: 'quad', adults: 2, children: 0 },
+    family: { city: 'Lahore', dur: '10', season: 'normal', tier: 'standard', share: 'quad', adults: 2, children: 2 },
+    luxury: { city: 'Islamabad', dur: '14', season: 'ramadan', tier: 'luxury', share: 'double', adults: 2, children: 0 }
+  };
+  function setSeg(selector, value, attr) {
+    document.querySelectorAll(selector).forEach(function (x) {
+      x.setAttribute('aria-pressed', x.dataset[attr] === value ? 'true' : 'false');
+    });
+  }
+  document.querySelectorAll('[data-preset]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var p = PRESETS[b.dataset.preset];
+      if (!p) return;
+      state.tier = p.tier; state.share = p.share;
+      setSeg('[data-tier]', p.tier, 'tier');
+      setSeg('[data-share]', p.share, 'share');
+      $('citySel').value = p.city;
+      $('durSel').value = p.dur;
+      $('seasonSel').value = p.season;
+      $('adultNum').value = p.adults;
+      $('childNum').value = p.children;
+      update();
+      document.querySelector('.results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
   });
 
   function calc() {
@@ -195,6 +233,7 @@
     $('seasonTag').textContent = r.season.label;
     countUp(r.grand);
     $('perPerson').textContent = pkr(r.adult);
+    $('perDay').textContent = '≈ ' + pkrShort(r.grand / parseInt(r.dur, 10)) + ' per person';
     var trav = r.adults + ' adult' + (r.adults > 1 ? 's' : '') +
       (r.children ? ' + ' + r.children + ' child' + (r.children > 1 ? 'ren' : '') : '');
     $('travSum').textContent = trav;

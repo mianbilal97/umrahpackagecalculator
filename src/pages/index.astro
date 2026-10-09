@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Calculator from '../components/Calculator.astro';
+import QaSection from '../components/QaSection.astro';
 ---
 
 <Layout>
@@ -70,6 +71,7 @@ import Calculator from '../components/Calculator.astro';
         <li><a href="#sharing">Room sharing: quad vs triple vs double</a></li>
         <li><a href="#save">9 ways to save money on Umrah</a></li>
         <li><a href="#licensed">Choosing a licensed operator</a></li>
+        <li><a href="#detailed-answers">Umrah price questions — answered in detail</a></li>
         <li><a href="#faq">Frequently asked questions</a></li>
       </ol>
     </nav>
@@ -84,7 +86,7 @@ import Calculator from '../components/Calculator.astro';
         <figcaption>The five building blocks of every Umrah package price.</figcaption>
       </figure>
       <h3>1. Visa and insurance</h3>
-      <p>The Umrah visa (or Saudi tourist e-visa used for Umrah) plus mandatory travel insurance. Budget around <strong>PKR 40,000–50,000</strong> per person. This is the one component with almost no variation between operators.</p>
+      <p>The Umrah visa (or Saudi tourist e-visa used for Umrah) plus mandatory travel insurance. The Saudi government's base fee is SAR 300 (about PKR 22,300), but since Pakistanis can't apply directly through the Nusuk app, the full agent-processed cost runs <strong>PKR 48,000–80,000</strong> per person — this is the one component with almost no variation between reputable operators.</p>
       <h3>2. Return flights</h3>
       <p>Usually the single biggest cost: roughly <strong>PKR 108,000–219,000</strong> return in economy depending on city, airline, and season. PIA, Saudia, Airblue, Serene Air, and Fly Jinnah operate direct routes from Karachi, Lahore, and Islamabad; other cities often connect through these hubs or the Gulf.</p>
       <h3>3. Hotels in Makkah and Madinah</h3>
@@ -101,10 +103,10 @@ import Calculator from '../components/Calculator.astro';
       <table class="price-table">
         <thead><tr><th scope="col">Duration</th><th scope="col">Economy (3★)</th><th scope="col">Standard (4★)</th><th scope="col">Luxury (5★)</th></tr></thead>
         <tbody>
-          <tr><td>7 days</td><td>PKR 158,000</td><td>PKR 230,000–280,000</td><td>PKR 550,000+</td></tr>
-          <tr><td>10 days</td><td>PKR 198,000</td><td>PKR 280,000–380,000</td><td>PKR 600,000+</td></tr>
-          <tr><td>14 days</td><td>PKR 245,000–255,000</td><td>PKR 305,000–410,000</td><td>PKR 598,000–720,000</td></tr>
-          <tr><td>21 days</td><td>PKR 310,000</td><td>PKR 400,000–480,000</td><td>PKR 750,000+</td></tr>
+          <tr><td>7 days</td><td>PKR 185,000–245,000</td><td>PKR 230,000–280,000</td><td>PKR 350,000+</td></tr>
+          <tr><td>10 days</td><td>PKR 210,000–250,000</td><td>PKR 280,000–380,000</td><td>PKR 345,000–355,000</td></tr>
+          <tr><td>14 days</td><td>PKR 245,000–289,000</td><td>PKR 305,000–410,000</td><td>PKR 598,000–720,000</td></tr>
+          <tr><td>20 / 21 days</td><td>PKR 207,000–310,000</td><td>PKR 400,000–480,000</td><td>PKR 389,300+</td></tr>
         </tbody>
       </table>
       <p>Two patterns jump out. First, the <strong>14-day package is the sweet spot</strong> Pakistani families book most: two weeks in the Haramain, two Jumuah prayers, unhurried ziarat. Second, the jump from 4-star to 5-star is far bigger than from 3-star to 4-star — you are paying for meters from the Haram, not just stars.</p>
@@ -115,7 +117,7 @@ import Calculator from '../components/Calculator.astro';
       <h2 id="methodology-h">How This Calculator Estimates Your Cost</h2>
       <p>No black box here — the full method, so you can judge the number:</p>
       <ol>
-        <li><strong>Visa + insurance:</strong> flat PKR 42,000 per person.</li>
+        <li><strong>Visa + insurance:</strong> flat PKR 55,000 per person — the realistic middle of the PKR 48,000–80,000 agent-processed range (the SAR 300 / ~PKR 22,300 base fee isn't accessible to Pakistanis directly).</li>
         <li><strong>Flights:</strong> city-specific return estimates (Karachi PKR 135,000 up to Quetta PKR 170,000), based on 2026 economy fares on PIA, Saudia, and private carriers.</li>
         <li><strong>Hotels:</strong> per-night, per-person rates for your tier and cities of stay (e.g., 14 days = 9 nights Makkah + 5 nights Madinah), multiplied by a sharing factor — quad ×1.0, triple ×1.25, double ×1.7.</li>
         <li><strong>Transport + ziarat/services:</strong> tier-based flat amounts (shared bus on economy, private vehicles on luxury).</li>
@@ -203,6 +205,8 @@ import Calculator from '../components/Calculator.astro';
         <li>Ask for the hotel booking confirmations before departure, and save the operator's 24/7 contact for Saudi Arabia.</li>
       </ul>
     </section>
+
+    <QaSection />
 
     <section id="faq" class="reveal" aria-labelledby="faq-h">
       <h2 id="faq-h">Frequently Asked Questions</h2>
