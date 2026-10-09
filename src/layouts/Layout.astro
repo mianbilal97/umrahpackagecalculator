@@ -1,0 +1,93 @@
+---
+import '../styles/global.css';
+
+const title = 'Umrah Package Calculator Pakistan — Estimate Your Umrah Cost in PKR';
+const description = 'Free Umrah package calculator for Pakistan: pick your city, duration, hotel tier and sharing to estimate your Umrah cost in PKR with a full price breakdown.';
+const site = 'https://umrahpackagecalculator.vercel.app';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href={site + '/'} />
+<meta name="theme-color" content="#0b6b4f" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content="Estimate your Umrah package cost from Pakistan in PKR — flights, hotels, visa, transport and ziarat, broken down per person." />
+<meta property="og:url" content={site + '/'} />
+<meta property="og:image" content={site + '/images/hero-kaaba.webp'} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content="Free Umrah package cost estimator for Pakistan, in PKR. No signup, private." />
+<meta name="twitter:image" content={site + '/images/hero-kaaba.webp'} />
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Umrah Package Calculator Pakistan",
+      "url": site + "/",
+      "applicationCategory": "TravelApplication",
+      "operatingSystem": "Any (Web browser)",
+      "browserRequirements": "Requires a modern browser with JavaScript enabled",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "PKR" },
+      "description": "Free calculator that estimates Umrah package costs from Pakistan in PKR based on departure city, duration, hotel tier, room sharing, travel season and group size. Runs entirely in the browser."
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "How accurate is this Umrah package calculator?", "acceptedAnswer": { "@type": "Answer", "text": "It is an indicative estimate built from published 2026 package prices in Pakistan, typically within 10–15% of operator quotes for the same inputs. Actual prices move with airline seats, hotel availability, and the PKR–SAR exchange rate, so always confirm with a licensed operator before paying." } },
+        { "@type": "Question", "name": "Does the estimate include return airfare from Pakistan?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The calculator includes estimated return economy airfare from your selected Pakistani departure city — Karachi, Lahore, Islamabad, Faisalabad, Sialkot, Multan, Peshawar, or Quetta." } },
+        { "@type": "Question", "name": "Why are Ramadan Umrah packages so much more expensive?", "acceptedAnswer": { "@type": "Answer", "text": "Demand peaks in Ramadan, especially the last ten nights, so airlines and hotels near the Haram raise prices sharply — often 40–60% above normal months. The calculator applies a Ramadan multiplier to reflect this." } },
+        { "@type": "Question", "name": "Which departure city in Pakistan is cheapest for Umrah?", "acceptedAnswer": { "@type": "Answer", "text": "Karachi is usually cheapest thanks to more airline options and competition, followed by Lahore and Islamabad. Peshawar and Quetta tend to cost more because of routing and fewer direct seats." } },
+        { "@type": "Question", "name": "How much does room sharing affect the price?", "acceptedAnswer": { "@type": "Answer", "text": "A lot. Quad sharing (4 persons per room) is the baseline and cheapest. Triple sharing typically costs about 25% more per person, and double sharing about 70% more, because the same room cost is split fewer ways." } },
+        { "@type": "Question", "name": "Are children charged the full package price?", "acceptedAnswer": { "@type": "Answer", "text": "Not usually. Children aged 2–11 sharing a bed with parents are typically charged around 65% of the adult price, which is what this calculator uses. Infants under 2 usually pay only visa and airline charges — confirm with your operator." } },
+        { "@type": "Question", "name": "What is the real difference between 3-star and 5-star Umrah packages?", "acceptedAnswer": { "@type": "Answer", "text": "Mostly distance from the Haram and comfort. Economy 3-star hotels are often 700m–1.5km away with shuttle buses; 4-star hotels sit 200–400m away; 5-star hotels are 50–200m from the Haram with premium service. The rituals are identical — you are paying for proximity and comfort." } },
+        { "@type": "Question", "name": "Should I book through an agent or arrange Umrah myself?", "acceptedAnswer": { "@type": "Answer", "text": "Pakistan requires Umrah travel through government-licensed operators for visa processing in most cases. A licensed agent bundles visa, flights, hotels, and transport — and is accountable if something goes wrong. DIY booking suits experienced travelers but leaves you handling every problem alone." } },
+        { "@type": "Question", "name": "How early should I book my Umrah package?", "acceptedAnswer": { "@type": "Answer", "text": "Book 2–3 months ahead for normal months and 4–6 months ahead for Ramadan or December–January. Early booking locks in cheaper airline seats and better hotel choices near the Haram." } },
+        { "@type": "Question", "name": "Is this calculator affiliated with any travel agency?", "acceptedAnswer": { "@type": "Answer", "text": "No. It is an independent estimate tool. It does not sell packages, collect your data, or earn commission from any operator — the numbers are computed in your browser from published market prices." } }
+      ]
+    }
+  ]
+})} />
+</head>
+<body>
+<a class="skip" href="#tool">Skip to the calculator</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/" aria-label="Umrah Package Calculator home">
+      <svg width="28" height="28" viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="8" width="48" height="48" rx="10" fill="#0b6b4f"/><path d="M32 14l9 6v8l-9 6-9-6v-8z" fill="#d4a437"/><path d="M22 44h20M26 44v-6h12v6" stroke="#fff" stroke-width="3.5" stroke-linecap="round" fill="none"/></svg>
+      <span>Umrah Calculator<small>PAKISTAN · PKR</small></span>
+    </a>
+    <nav class="nav" aria-label="Page sections">
+      <a href="#tool">Calculator</a>
+      <a href="#how-to-use">How to use</a>
+      <a href="#prices">Prices 2026</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <slot />
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© 2026 Umrah Package Calculator — indicative estimates only, not a travel agency.</span>
+    <nav aria-label="Footer">
+      <a href="#tool">Calculator</a>
+      <a href="#prices">Prices 2026</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,244 @@
+---
+/* Umrah Package Calculator — Pakistan-only pricing engine. Client-side only. */
+---
+
+<section id="tool" class="wrap" aria-label="Umrah package cost calculator">
+  <div class="tool-card">
+    <div class="calc-grid">
+      <div>
+        <div class="field">
+          <label for="citySel">Departure city (Pakistan)</label>
+          <select id="citySel">
+            <option value="Karachi" selected>Karachi</option>
+            <option value="Lahore">Lahore</option>
+            <option value="Islamabad">Islamabad</option>
+            <option value="Faisalabad">Faisalabad</option>
+            <option value="Sialkot">Sialkot</option>
+            <option value="Multan">Multan</option>
+            <option value="Peshawar">Peshawar</option>
+            <option value="Quetta">Quetta</option>
+          </select>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label for="durSel">Package duration</label>
+            <select id="durSel">
+              <option value="7">7 days</option>
+              <option value="10">10 days</option>
+              <option value="14" selected>14 days</option>
+              <option value="15">15 days</option>
+              <option value="21">21 days</option>
+              <option value="28">28 days</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="seasonSel">Travel season</label>
+            <select id="seasonSel">
+              <option value="normal" selected>Other months</option>
+              <option value="rabi">Rabi-ul-Awwal</option>
+              <option value="winter">December – January</option>
+              <option value="summer">June – August (value)</option>
+              <option value="ramadan">Ramadan</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label id="tierLabel">Hotel tier</label>
+          <div class="seg" role="group" aria-labelledby="tierLabel" style="display:flex">
+            <button type="button" data-tier="economy" aria-pressed="true">Economy 3★</button>
+            <button type="button" data-tier="standard" aria-pressed="false">Standard 4★</button>
+            <button type="button" data-tier="luxury" aria-pressed="false">Luxury 5★</button>
+          </div>
+        </div>
+        <div class="field">
+          <label id="shareLabel">Room sharing</label>
+          <div class="seg" role="group" aria-labelledby="shareLabel" style="display:flex">
+            <button type="button" data-share="quad" aria-pressed="true">Quad (4)</button>
+            <button type="button" data-share="triple" aria-pressed="false">Triple (3)</button>
+            <button type="button" data-share="double" aria-pressed="false">Double (2)</button>
+          </div>
+          <p class="hint">Quad sharing is the baseline and cheapest — the room cost splits four ways.</p>
+        </div>
+        <div class="two-col">
+          <div class="field">
+            <label for="adultNum">Adults</label>
+            <input type="number" id="adultNum" min="1" max="50" value="2" inputmode="numeric" />
+          </div>
+          <div class="field">
+            <label for="childNum">Children (2–11 yrs)</label>
+            <input type="number" id="childNum" min="0" max="50" value="0" inputmode="numeric" />
+            <p class="hint">≈65% of adult price</p>
+          </div>
+        </div>
+        <div class="pkr-note">All prices in <strong>Pakistani Rupees (PKR)</strong>, per-person estimates based on published 2026 market prices. See methodology below.</div>
+      </div>
+
+      <div class="results" aria-live="polite">
+        <h3>Estimated package cost <span class="season-tag" id="seasonTag">Other months</span></h3>
+        <div class="big-num"><span id="grandTotal">0</span> <span class="big-unit">PKR</span></div>
+        <div class="per-person">≈ <strong id="perPerson">–</strong> per adult · <span id="travSum">2 travelers</span></div>
+
+        <div class="bars" aria-hidden="true">
+          <div class="barrow"><span class="blabel">Flights</span><div class="btrack"><div class="bfill" id="barFlight"></div></div><span class="bval" id="valFlight"></span></div>
+          <div class="barrow"><span class="blabel">Hotels</span><div class="btrack"><div class="bfill gold" id="barHotel"></div></div><span class="bval" id="valHotel"></span></div>
+          <div class="barrow"><span class="blabel">Visa & insurance</span><div class="btrack"><div class="bfill teal" id="barVisa"></div></div><span class="bval" id="valVisa"></span></div>
+          <div class="barrow"><span class="blabel">Transport</span><div class="btrack"><div class="bfill slate" id="barTransport"></div></div><span class="bval" id="valTransport"></span></div>
+          <div class="barrow"><span class="blabel">Ziarat & services</span><div class="btrack"><div class="bfill rose" id="barService"></div></div><span class="bval" id="valService"></span></div>
+        </div>
+
+        <div class="breakdown" id="breakdown"></div>
+        <p class="hint" style="margin-top:10px">Indicative estimate (±10–15%). Confirm final pricing with a licensed operator before paying.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  'use strict';
+  /* ---- pricing data (PKR, per person, 2026 market) ---- */
+  var CITIES = { Karachi: 135000, Lahore: 148000, Islamabad: 152000, Faisalabad: 155000, Sialkot: 155000, Multan: 158000, Peshawar: 162000, Quetta: 170000 };
+  var VISA = 42000;
+  var TIERS = {
+    economy:  { makkah: 2600,  madinah: 2200,  transport: 28000, service: 15000 },
+    standard: { makkah: 5200,  madinah: 4500,  transport: 32000, service: 20000 },
+    luxury:   { makkah: 12000, madinah: 10000, transport: 50000, service: 35000 }
+  };
+  var TIER_LABEL = { economy: 'Economy 3★', standard: 'Standard 4★', luxury: 'Luxury 5★' };
+  var DURATIONS = { 7: [4, 2], 10: [6, 3], 14: [9, 5], 15: [9, 5], 21: [13, 7], 28: [17, 10] }; // [makkah nights, madinah nights]
+  var SHARING = { quad: 1, triple: 1.25, double: 1.7 };
+  var SHARE_LABEL = { quad: 'Quad (4 persons)', triple: 'Triple (3 persons)', double: 'Double (2 persons)' };
+  var SEASONS = {
+    normal:  { mult: 1.00, label: 'Other months' },
+    rabi:    { mult: 1.10, label: 'Rabi-ul-Awwal' },
+    winter:  { mult: 1.15, label: 'December – January' },
+    summer:  { mult: 0.95, label: 'June – August (value)' },
+    ramadan: { mult: 1.45, label: 'Ramadan' }
+  };
+  var CHILD_FACTOR = 0.65;
+
+  var state = { tier: 'economy', share: 'quad' };
+  var displayed = 0, rafId = null;
+
+  function $(id) { return document.getElementById(id); }
+  function pkr(v) { return 'PKR ' + Math.round(v).toLocaleString('en-PK'); }
+  function pkrShort(v) {
+    v = Math.round(v);
+    if (v >= 100000) return (v / 100000).toFixed(1).replace(/\.0$/, '') + 'L';
+    return (v / 1000).toFixed(0) + 'k';
+  }
+
+  document.querySelectorAll('[data-tier]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      state.tier = b.dataset.tier;
+      document.querySelectorAll('[data-tier]').forEach(function (x) {
+        x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+      });
+      update();
+    });
+  });
+  document.querySelectorAll('[data-share]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      state.share = b.dataset.share;
+      document.querySelectorAll('[data-share]').forEach(function (x) {
+        x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+      });
+      update();
+    });
+  });
+  ['citySel', 'durSel', 'seasonSel', 'adultNum', 'childNum'].forEach(function (id) {
+    $(id).addEventListener('input', update);
+    $(id).addEventListener('change', update);
+  });
+
+  function calc() {
+    var city = $('citySel').value;
+    var dur = $('durSel').value;
+    var season = SEASONS[$('seasonSel').value];
+    var t = TIERS[state.tier];
+    var nights = DURATIONS[dur];
+    var adults = Math.max(1, parseInt($('adultNum').value, 10) || 1);
+    var children = Math.max(0, parseInt($('childNum').value, 10) || 0);
+
+    var flight = CITIES[city];
+    var hotel = (nights[0] * t.makkah + nights[1] * t.madinah) * SHARING[state.share];
+    var transport = t.transport, service = t.service;
+    var base = VISA + flight + hotel + transport + service;      // per adult, pre-season
+    var adult = Math.round((base * season.mult) / 500) * 500;    // round to nearest 500
+    var child = Math.round((adult * CHILD_FACTOR) / 500) * 500;
+    var grand = adults * adult + children * child;
+
+    return {
+      city: city, dur: dur, nights: nights, season: season, adults: adults, children: children,
+      flight: flight, hotel: hotel, transport: transport, service: service, base: base,
+      adult: adult, child: child, grand: grand
+    };
+  }
+
+  function countUp(target) {
+    if (rafId) cancelAnimationFrame(rafId);
+    var start = displayed, t0 = performance.now(), dur = 650;
+    function frame(t) {
+      var p = Math.min(1, (t - t0) / dur);
+      var e = 1 - Math.pow(1 - p, 3);
+      displayed = start + (target - start) * e;
+      $('grandTotal').textContent = Math.round(displayed).toLocaleString('en-PK');
+      if (p < 1) rafId = requestAnimationFrame(frame);
+      else { displayed = target; $('grandTotal').textContent = target.toLocaleString('en-PK'); }
+    }
+    rafId = requestAnimationFrame(frame);
+  }
+
+  function update() {
+    var r = calc();
+    var totalNights = r.nights[0] + r.nights[1];
+    $('seasonTag').textContent = r.season.label;
+    countUp(r.grand);
+    $('perPerson').textContent = pkr(r.adult);
+    var trav = r.adults + ' adult' + (r.adults > 1 ? 's' : '') +
+      (r.children ? ' + ' + r.children + ' child' + (r.children > 1 ? 'ren' : '') : '');
+    $('travSum').textContent = trav;
+
+    /* animated component bars (share of per-adult base) */
+    var parts = [
+      ['Flight', 'Flight', r.flight], ['Hotel', 'Hotel', r.hotel],
+      ['Visa', 'Visa', VISA], ['Transport', 'Transport', r.transport], ['Service', 'Service', r.service]
+    ];
+    parts.forEach(function (p) {
+      var pct = Math.max(2, (p[2] / r.base) * 100);
+      $('bar' + p[1]).style.width = pct.toFixed(1) + '%';
+      $('val' + p[1]).textContent = pkrShort(p[2]);
+    });
+
+    /* breakdown */
+    var rows = [
+      ['Visa + insurance', VISA],
+      ['Return flights (' + r.city + ')', r.flight],
+      ['Hotels — ' + totalNights + ' nights (' + TIER_LABEL[state.tier] + ', ' + SHARE_LABEL[state.share] + ')', r.hotel],
+      ['Ground transport', r.transport],
+      ['Ziarat + services', r.service]
+    ];
+    var html = rows.map(function (x) {
+      return '<div class="bd-row"><span>' + x[0] + '</span><span>' + pkr(x[1]) + '</span></div>';
+    }).join('');
+    if (r.season.mult !== 1) {
+      var dir = r.season.mult > 1 ? '+' : '−';
+      html += '<div class="bd-row"><span>Season adjustment (' + r.season.label + ')</span><span>' + dir + Math.round(Math.abs(r.season.mult - 1) * 100) + '%</span></div>';
+    }
+    html += '<div class="bd-row"><span>Per adult</span><span>' + pkr(r.adult) + '</span></div>';
+    if (r.children) html += '<div class="bd-row"><span>Per child (65%)</span><span>' + pkr(r.child) + '</span></div>';
+    html += '<div class="bd-row total"><span>Estimated total</span><span>' + pkr(r.grand) + '</span></div>';
+    $('breakdown').innerHTML = html;
+  }
+
+  /* scroll reveal */
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+
+  update();
+})();
+</script>
